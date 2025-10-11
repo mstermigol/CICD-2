@@ -37,7 +37,7 @@ jobs:
 
       - name: Run Unit Tests with pytest and Coverage
         run: |
-          pytest --ignore=tests/test_acceptance_app.py  # Genera un informe XML para SonarCloud
+          pytest --ignore=tests/test_acceptance_app.py
 
       - name: Run Acceptance Tests
         env:
@@ -45,7 +45,7 @@ jobs:
         run: |
           gunicorn --workers=2 --bind=0.0.0.0:8000 app.app:app &
           sleep 10
-          pytest tests/test_acceptance_app.py --cov-report=xml:acceptance_coverage.xml --html=acceptance_report.html # Genera un informe XML con otro nombre, para no sobre-escribir el anterior de  las pruebas unitarias
+          pytest tests/test_acceptance_app.py --cov-report=xml:acceptance_coverage.xml --html=acceptance_report.html
 
       - name: Upload Test Reports Artifacts
         uses: actions/upload-artifact@v4
@@ -55,13 +55,13 @@ jobs:
           path: |
             htmlcov/
             report.html
-        
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automáticamente proporcionado
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # El secreto que creaste
-    
+
       # --- Pasos de Docker ---
 
       - name: Set up QEMU
@@ -79,6 +79,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Compute lowercase image name
+        id: vars
+        run: |
+          echo "repo_lc=$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
@@ -87,7 +92,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.vars.outputs.repo_lc }}:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.vars.outputs.repo_lc }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
