@@ -19,7 +19,8 @@ def index():
 
     - Si el método es GET: muestra el formulario de la calculadora.
     - Si el método es POST: procesa los datos enviados, realiza la operación
-      seleccionada (sumar, restar, multiplicar o dividir) y devuelve el resultado.
+      seleccionada (sumar, restar, multiplicar o dividir)
+      y devuelve el resultado.
 
     Returns:
         str: El HTML renderizado de la página con el resultado.
