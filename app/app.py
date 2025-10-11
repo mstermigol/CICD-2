@@ -1,8 +1,8 @@
 """
 Módulo principal de la aplicación Flask de la calculadora.
 
-Este archivo define la aplicación web, gestiona las rutas y 
-procesa las operaciones aritméticas básicas (suma, resta, 
+Este archivo define la aplicación web, gestiona las rutas y
+procesa las operaciones aritméticas básicas (suma, resta,
 multiplicación y división) a través del formulario HTML.
 """
 

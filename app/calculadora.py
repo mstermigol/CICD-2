@@ -5,6 +5,7 @@ Contiene funciones para sumar, restar, multiplicar y dividir dos números.
 Incluye manejo de errores para la división entre cero.
 """
 
+
 def sumar(a, b):
     """Devuelve la suma de a y b."""
     return a + b
