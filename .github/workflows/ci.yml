@@ -65,7 +65,6 @@ jobs:
             coverage.xml
             pylint-report.txt
             flake8-report.txt
-            acceptance_report.html
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5.0.0
