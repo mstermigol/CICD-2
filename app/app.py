@@ -6,6 +6,7 @@ procesa las operaciones aritméticas básicas (suma, resta,
 multiplicación y división) a través del formulario HTML.
 """
 
+import os
 from flask import Flask, render_template, request
 from .calculadora import sumar, restar, multiplicar, dividir
 
@@ -50,5 +51,14 @@ def index():
     return render_template("index.html", resultado=resultado)
 
 
-if __name__ == "__main__":  # pragma: no cover
-    app.run(port=5000, host="0.0.0.0")
+@app.route("/health")
+def health():
+    """
+    Endpoint de verificación de salud para el ALB.
+    """
+    return "OK", 200
+
+
+if __name__ == "__main__":
+    app_port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=app_port, debug=False)
