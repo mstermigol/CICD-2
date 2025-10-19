@@ -52,7 +52,7 @@ jobs:
           gunicorn --workers=2 --bind=0.0.0.0:8000 app.app:app &
           GUNICORN_PID=$!
           sleep 5
-          pytest tests/test_acceptance_app.py --html=acceptance_report.html || (kill $GUNICORN_PID; exit 1)
+          pytest -p no:cov tests/test_acceptance_app.py --html=acceptance_report.html
           kill $GUNICORN_PID
 
       - name: Upload Test Reports Artifacts
