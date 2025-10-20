@@ -59,6 +59,6 @@ def health():
     return "OK", 200
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     app_port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=app_port, debug=False)
