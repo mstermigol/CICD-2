@@ -95,15 +95,17 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-       
-      - name: Poner nombre de imagen en minuscula
+
+      # 12. Convertir el nombre del repositorio a minúsculas (Docker lo requiere)
+      - name: Convert repo name to lowercase
         id: vars
         run: |
-          echo "repo_lc=$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+          REPO_LC=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lc=$REPO_LC" >> $GITHUB_OUTPUT
 
-      # 12. Construir y pushear imagen Docker a Docker Hub
+      # 13. Construir y pushear imagen Docker a Docker Hub
       - name: Build and push Docker image
-        id: docker_build_push # Darle ID para referenciar output
+        id: docker_build_push
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
         with:
@@ -111,20 +113,20 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.vars.outputs.repo_lc }}:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.vars.outputs.repo_lc }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # 13. Establecer las salidas del job usadas para el despliegue
+      # 14. Establecer las salidas del job usadas para el despliegue
       - name: Set Job Outputs
         id: set_outputs
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          echo "repo_name=${{ github.event.repository.name }}" >> $GITHUB_OUTPUT
+          echo "repo_name=${{ steps.vars.outputs.repo_lc }}" >> $GITHUB_OUTPUT
           echo "image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
 
-
+          
   # -------------------------------------
   # Job de Despliegue CloudFormation Staging
   # -------------------------------------
