@@ -57,22 +57,21 @@ def find_elements(browser):
         ("2", "3", "sumar", "Resultado: 5"),
         ("5", "2", "restar", "Resultado: 3"),
         ("4", "6", "multiplicar", "Resultado: 24"),
-        ("10", "2", "dividir", "Resultado: 5"), 
+        ("10", "2", "dividir", "Resultado: 5"),
         ("5", "0", "dividir", "Error: No se puede dividir por cero"),
-        ("abc", "def", "sumar", "Error: Introduce números válidos"), 
+        ("abc", "def", "sumar", "Error: Introduce números válidos"),
+        ("2", "3", "potencia", "Resultado: 8"),
+        ("9", "", "raiz", "Resultado: 3"),
+        ("-9", "", "raiz", "Error: No se puede calcular la raíz cuadrada de un número negativo"),
     ],
 )
 def test_calculadora(browser, num1, num2, operacion, resultado_esperado):
     browser.get(BASE_URL)
-
-    # Encuentra los elementos de la página.  Esta vez con la funcion auxiliar.
     num1_input, num2_input, operacion_select, calcular_button = find_elements(browser)
 
-    #Realiza la operacion:
     num1_input.send_keys(num1)
     num2_input.send_keys(num2)
     operacion_select.select_by_value(operacion)
     calcular_button.click()
 
-    #Verifica con la funcion auxiliar:
     assert resultado_esperado in get_resultado(browser)

@@ -63,3 +63,20 @@ def test_index_post_missing_fields_graceful(client):
     """Comprueba que si faltan campos en el formulario, la app no revienta."""
     resp = client.post("/", data={"num1": "1"})
     assert resp.status_code != 500
+
+def test_index_post_potencia(client):
+    response = client.post('/', data={'num1': '2', 'num2': '3', 'operacion': 'potencia'})
+    assert response.status_code == 200
+    assert b'8.0' in response.data
+
+
+def test_index_post_raiz(client):
+    response = client.post('/', data={'num1': '9', 'num2': '', 'operacion': 'raiz'})
+    assert response.status_code == 200
+    assert b'3.0' in response.data
+
+
+def test_index_post_raiz_negativo(client):
+    response = client.post('/', data={'num1': '-4', 'num2': '', 'operacion': 'raiz'})
+    assert response.status_code == 200
+    assert b'Error: No se puede calcular la ra\xc3\xadz cuadrada de un n\xc3\xbamero negativo' in response.data
