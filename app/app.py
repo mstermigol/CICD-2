@@ -51,8 +51,12 @@ def index():
                     resultado = "Operación no válida"
 
         except ValueError as ve:
-            msg = str(ve) or "Introduce números válidos"
-            resultado = f"Error: {msg}"
+            msg = str(ve) if ve else ""
+            if "No se puede calcular la raíz cuadrada" in msg:
+                resultado = f"Error: {msg}"
+            else:
+                resultado = "Error: Introduce números válidos"
+
         except ZeroDivisionError:
             resultado = "Error: No se puede dividir por cero"
 
