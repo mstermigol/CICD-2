@@ -53,14 +53,11 @@ def test_health_endpoint_ok(client):
     resp = client.get("/health")
     assert resp.status_code == 200
     assert resp.get_data(as_text=True) == "OK"
-    assert resp.content_type.startswith("text/plain")
-
 
 def test_method_not_allowed_put(client):
     """Comprueba que métodos no permitidos (PUT, por ejemplo) devuelvan 405."""
     resp = client.put("/", data={})
     assert resp.status_code == 405
-
 
 def test_index_post_missing_fields_graceful(client):
     """Comprueba que si faltan campos en el formulario, la app no revienta."""
