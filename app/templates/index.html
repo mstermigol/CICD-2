@@ -1,23 +1,72 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="utf-8">
     <title>Calculadora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 300px;
+            gap: 0.5rem;
+        }
+        input, select, button {
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+        h2 {
+            margin-top: 1rem;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <h1>Calculadora</h1>
+
     <form method="post">
         <input type="text" name="num1" placeholder="Número 1" required>
-        <input type="text" name="num2" placeholder="Número 2" required>
-        <select name="operacion">
+        <input type="text" id="num2" name="num2" placeholder="Número 2" required>
+
+        <select name="operacion" id="operacion">
             <option value="sumar">Sumar</option>
             <option value="restar">Restar</option>
             <option value="multiplicar">Multiplicar</option>
             <option value="dividir">Dividir</option>
+            <option value="potencia">Potencia</option>
+            <option value="raiz">Raíz Cuadrada (solo Número 1)</option>
         </select>
+
         <button type="submit">Calcular</button>
     </form>
-    {% if resultado is not none %}
+
+    {% if error %}
+        <h2 class="error">{{ error }}</h2>
+    {% elif resultado is not none %}
         <h2>Resultado: {{ resultado }}</h2>
     {% endif %}
+
+    <script>
+        const operacion = document.getElementById('operacion');
+        const num2 = document.getElementById('num2');
+
+        function toggleNum2() {
+            if (operacion.value === 'raiz') {
+                num2.disabled = true;
+                num2.value = '';
+            } else {
+                num2.disabled = false;
+            }
+        }
+
+        operacion.addEventListener('change', toggleNum2);
+        toggleNum2();
+    </script>
 </body>
 </html>
