@@ -44,5 +44,5 @@ def raiz_cuadrada(a):
         ValueError: Si a es negativo.
     """
     if a < 0:
-        raise ValueError("número negativo no tiene raíz cuadrada real.")
+        raise ValueError("número negativo no tiene raíz cuadrada real")
     return a**0.5

@@ -62,7 +62,7 @@ def find_elements(browser):
         ("abc", "def", "sumar", "Error: Introduce números válidos"),
         ("2", "3", "potencia", "Resultado: 8"),
         ("9", "", "raiz", "Resultado: 3"),
-        ("-9", "", "raiz", "Error: No se puede calcular la raíz cuadrada de un número negativo"),
+        ("-9", "", "raiz", "Error: número negativo no tiene raíz cuadrada real"),
     ],
 )
 def test_calculadora(browser, num1, num2, operacion, resultado_esperado):
