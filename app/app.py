@@ -65,7 +65,7 @@ def index():
             resultado = realizar_operacion(operacion, num1_str, num2_str)
         except ValueError as ve:
             msg = str(ve) if ve else ""
-            if "No se puede calcular la raíz cuadrada" in msg:
+            if operacion in ("raiz", "raiz_cuadrada") and msg:
                 resultado = f"Error: {msg}"
             else:
                 resultado = "Error: Introduce números válidos"
