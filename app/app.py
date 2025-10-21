@@ -1,16 +1,49 @@
 """
 Módulo principal de la aplicación Flask de la calculadora.
 
-Este archivo define la aplicación web, gestiona las rutas y
-procesa las operaciones aritméticas básicas (suma, resta,
-multiplicación y división) a través del formulario HTML.
+Define la aplicación web, gestiona las rutas y procesa las
+operaciones aritméticas básicas (suma, resta, multiplicación,
+división, potencia y raíz cuadrada) mediante un formulario HTML.
 """
 
 import os
 from flask import Flask, render_template, request
-from .calculadora import sumar, restar, multiplicar, dividir, potencia, raiz_cuadrada
+from .calculadora import (
+    sumar,
+    restar,
+    multiplicar,
+    dividir,
+    potencia,
+    raiz_cuadrada,
+)
 
 app = Flask(__name__)
+
+
+def realizar_operacion(operacion, num1_str, num2_str=None):
+    """
+    Ejecuta la operación aritmética seleccionada.
+    Separa la lógica para reducir la complejidad de la vista principal.
+    """
+    if operacion in ("raiz", "raiz_cuadrada"):
+        num1 = float(num1_str)
+        return raiz_cuadrada(num1)
+
+    num1 = float(num1_str)
+    num2 = float(num2_str)
+
+    operaciones = {
+        "sumar": sumar,
+        "restar": restar,
+        "multiplicar": multiplicar,
+        "dividir": dividir,
+        "potencia": potencia,
+    }
+
+    if operacion not in operaciones:
+        return "Operación no válida"
+
+    return operaciones[operacion](num1, num2)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -18,9 +51,8 @@ def index():
     """
     Maneja la ruta principal de la aplicación.
 
-    - Si el método es GET: muestra el formulario de la calculadora.
-    - Si el método es POST: procesa los datos enviados, realiza la operación
-      seleccionada y devuelve el resultado.
+    - GET: muestra el formulario.
+    - POST: procesa los datos, realiza la operación y muestra el resultado.
     """
     resultado = None
 
@@ -30,33 +62,13 @@ def index():
         num2_str = (request.form.get("num2") or "").strip()
 
         try:
-            if operacion in ("raiz", "raiz_cuadrada"):
-                num1 = float(num1_str)
-                resultado = raiz_cuadrada(num1)
-            else:
-                num1 = float(num1_str)
-                num2 = float(num2_str)
-
-                if operacion == "sumar":
-                    resultado = sumar(num1, num2)
-                elif operacion == "restar":
-                    resultado = restar(num1, num2)
-                elif operacion == "multiplicar":
-                    resultado = multiplicar(num1, num2)
-                elif operacion == "dividir":
-                    resultado = dividir(num1, num2)
-                elif operacion == "potencia":
-                    resultado = potencia(num1, num2)
-                else:
-                    resultado = "Operación no válida"
-
+            resultado = realizar_operacion(operacion, num1_str, num2_str)
         except ValueError as ve:
             msg = str(ve) if ve else ""
             if "No se puede calcular la raíz cuadrada" in msg:
                 resultado = f"Error: {msg}"
             else:
                 resultado = "Error: Introduce números válidos"
-
         except ZeroDivisionError:
             resultado = "Error: No se puede dividir por cero"
 
