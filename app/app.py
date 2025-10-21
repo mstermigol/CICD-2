@@ -46,6 +46,23 @@ def realizar_operacion(operacion, num1_str, num2_str=None):
     return operaciones[operacion](num1, num2)
 
 
+def extraer_form(req):
+    """Obtiene y normaliza los campos del formulario."""
+    return (
+        (req.form.get("operacion") or "").strip(),
+        (req.form.get("num1") or "").strip(),
+        (req.form.get("num2") or "").strip(),
+    )
+
+
+def mensaje_error_value_error(operacion, ve):
+    """Mapea ValueError a un mensaje de error de usuario."""
+    msg = (str(ve) or "").strip()
+    if operacion in ("raiz", "raiz_cuadrada") and msg:
+        return f"Error: {msg}"
+    return "Error: Introduce números válidos"
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     """
@@ -54,23 +71,17 @@ def index():
     - GET: muestra el formulario.
     - POST: procesa los datos, realiza la operación y muestra el resultado.
     """
-    resultado = None
+    if request.method != "POST":
+        return render_template("index.html", resultado=None)
 
-    if request.method == "POST":
-        operacion = (request.form.get("operacion") or "").strip()
-        num1_str = (request.form.get("num1") or "").strip()
-        num2_str = (request.form.get("num2") or "").strip()
+    operacion, num1_str, num2_str = extraer_form(request)
 
-        try:
-            resultado = realizar_operacion(operacion, num1_str, num2_str)
-        except ValueError as ve:
-            msg = str(ve) if ve else ""
-            if operacion in ("raiz", "raiz_cuadrada") and msg:
-                resultado = f"Error: {msg}"
-            else:
-                resultado = "Error: Introduce números válidos"
-        except ZeroDivisionError:
-            resultado = "Error: No se puede dividir por cero"
+    try:
+        resultado = realizar_operacion(operacion, num1_str, num2_str)
+    except ValueError as ve:
+        resultado = mensaje_error_value_error(operacion, ve)
+    except ZeroDivisionError:
+        resultado = "Error: No se puede dividir por cero"
 
     return render_template("index.html", resultado=resultado)
 
