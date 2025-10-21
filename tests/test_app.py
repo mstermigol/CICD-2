@@ -79,4 +79,4 @@ def test_index_post_raiz(client):
 def test_index_post_raiz_negativo(client):
     response = client.post('/', data={'num1': '-4', 'num2': '', 'operacion': 'raiz'})
     assert response.status_code == 200
-    assert b'Error: No se puede calcular la ra\xc3\xadz cuadrada de un n\xc3\xbamero negativo' in response.data
+    assert "Error: número negativo no tiene raíz cuadrada real" in response.get_data(as_text=True)
